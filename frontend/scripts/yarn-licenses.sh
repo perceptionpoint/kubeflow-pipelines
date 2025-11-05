@@ -3,16 +3,17 @@
 set -ex
 
 # 1. Install yarn
-npm install -D yarn
+npm install -D yarn@1.22.19
 
 # 2. Set up yarn: It will convert from package.json to yarn.lock
-npx yarn install
+npx yarn import
 
 # 3. Generate full license texts in one file
 npx yarn licenses generate-disclaimer > dependency-licenses.txt
 
 # 4. Generate full license texts for Frontend server
 pushd server
+npx yarn import
 npx yarn install
 npx yarn licenses generate-disclaimer > dependency-licenses.txt
 popd

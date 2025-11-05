@@ -254,6 +254,13 @@ class RunDetails extends Page<RunDetailsInternalProps, RunDetailsState> {
     const selectedNodeId = selectedNodeDetails?.id || '';
     const namespace = workflow?.metadata?.namespace;
     let stackdriverK8sLogsUrl = '';
+    const currentNamespace = namespace || 'default';
+    const testingNamespaces = ['testing', 'dev'];
+    const logsHost = testingNamespaces.includes(currentNamespace) ? 'logs.testing.perception-point.io' : 'logs.perception-point.io';
+    const logsIndexPatternId = testingNamespaces.includes(currentNamespace) ? 'ffe37620-4dd2-11eb-a5fd-336c91f3582d' : '33e16f70-8f71-11ea-a3d5-1b13f24e3999';    
+    if (logsHost && logsIndexPatternId && selectedNodeDetails && selectedNodeDetails.id) {
+      stackdriverK8sLogsUrl = `https://${logsHost}/_dashboards/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_a=(columns:!(_source),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${logsIndexPatternId}',key:type,negate:!f,params:(query:pplogger),type:phrase),query:(match_phrase:(type:pplogger))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${logsIndexPatternId}',key:kubernetes.container_name,negate:!f,params:(query:main),type:phrase),query:(match_phrase:(kubernetes.container_name:main))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${logsIndexPatternId}',key:kubernetes.pod_name,negate:!f,params:(query:${selectedNodeDetails.id}),type:phrase),query:(match_phrase:(kubernetes.pod_name:${selectedNodeDetails.id})))),index:'${logsIndexPatternId}',interval:auto,query:(language:kuery,query:''),sort:!())`;
+    }
     if (projectId && clusterName && selectedNodeDetails && selectedNodeDetails.id) {
       stackdriverK8sLogsUrl = `https://console.cloud.google.com/logs/viewer?project=${projectId}&interval=NO_LIMIT&advancedFilter=resource.type%3D"k8s_container"%0Aresource.labels.cluster_name:"${clusterName}"%0Aresource.labels.pod_name:"${selectedNodeDetails.id}"`;
     }
@@ -531,7 +538,7 @@ class RunDetails extends Page<RunDetailsInternalProps, RunDetailsState> {
                                             rel='noopener noreferrer'
                                             className={classes(css.link, commonCss.unstyled)}
                                           >
-                                            Stackdriver Kubernetes Monitoring
+                                            Logs Opensearch
                                           </a>
                                           .
                                         </div>
