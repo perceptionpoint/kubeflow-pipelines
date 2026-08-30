@@ -256,7 +256,7 @@ class RunDetails extends Page<RunDetailsInternalProps, RunDetailsState> {
     let stackdriverK8sLogsUrl = '';
     const currentNamespace = namespace || 'default';
     const testingNamespaces = ['testing', 'dev'];
-    const logsHost = testingNamespaces.includes(currentNamespace) ? 'logs.internal.testing.fortimail.io' : 'logs.internal.us.fortimail.io';
+    const logsHost = testingNamespaces.includes(currentNamespace) ? 'logs-dash.internal.us-ashburn-1.dev.ap01.fortimail.io:5601' : 'logs-dash.internal.us-ashburn-1.prod.ap01.fortimail.io:5601';
     const logsIndexPatternId = testingNamespaces.includes(currentNamespace) ? 'ffe37620-4dd2-11eb-a5fd-336c91f3582d' : '33e16f70-8f71-11ea-a3d5-1b13f24e3999';    
     if (logsHost && logsIndexPatternId && selectedNodeDetails && selectedNodeDetails.id) {
       stackdriverK8sLogsUrl = `https://${logsHost}/_dashboards/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_a=(columns:!(_source),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${logsIndexPatternId}',key:type,negate:!f,params:(query:pplogger),type:phrase),query:(match_phrase:(type:pplogger))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${logsIndexPatternId}',key:kubernetes.container_name,negate:!f,params:(query:main),type:phrase),query:(match_phrase:(kubernetes.container_name:main))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${logsIndexPatternId}',key:kubernetes.pod_name,negate:!f,params:(query:${selectedNodeDetails.id}),type:phrase),query:(match_phrase:(kubernetes.pod_name:${selectedNodeDetails.id})))),index:'${logsIndexPatternId}',interval:auto,query:(language:kuery,query:''),sort:!())`;
