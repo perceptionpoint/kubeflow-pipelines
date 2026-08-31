@@ -2,20 +2,25 @@
 
 set -ex
 
+# Transitive deps (e.g. node-releases) have started declaring `engines: node >=18`,
+# which yarn treats as fatal while this image is still on node 14. License text
+# generation doesn't execute any of that code, so the check is safe to skip.
+YARN="npx yarn --ignore-engines"
+
 # 1. Install yarn
 npm install -D yarn@1.22.19
 
 # 2. Set up yarn: It will convert from package.json to yarn.lock
-npx yarn import
+$YARN import
 
 # 3. Generate full license texts in one file
-npx yarn licenses generate-disclaimer > dependency-licenses.txt
+$YARN licenses generate-disclaimer > dependency-licenses.txt
 
 # 4. Generate full license texts for Frontend server
 pushd server
-npx yarn import
-npx yarn install
-npx yarn licenses generate-disclaimer > dependency-licenses.txt
+$YARN import
+$YARN install
+$YARN licenses generate-disclaimer > dependency-licenses.txt
 popd
 
 # 5. Merge two licenses to one file in server/dependency-licenses.txt
